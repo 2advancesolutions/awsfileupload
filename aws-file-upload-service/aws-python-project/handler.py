@@ -1,5 +1,5 @@
 from io import BytesIO
-from PIL import Image
+from PIL import Image, ImageOps
 import boto3 
 import json
 import os
