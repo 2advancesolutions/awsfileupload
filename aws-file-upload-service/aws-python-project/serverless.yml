@@ -19,7 +19,21 @@ provider:
           Action:
             - s3:*
           Resource: "*"
-
+custom:
+  bucket: aws-python-project-dev-bucket
+  pythonRequirements:
+    dockerizePip: true
+       
 functions:
-  hello:
-    handler: handler.hello
+  s3_thumbnail_generator:
+    handler: handler.s3_thumbnail_generator
+    events:
+      - s3:
+          bucket: ${self:custom.bucket}
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: uploads/
+            - suffix: .jpg
+plugins:
+  - serverless-python-requirements
+
