@@ -33,7 +33,7 @@ functions:
           event: s3:ObjectCreated:*
           rules:
             - prefix: uploads/
-            - suffix: .jpg
+            - suffix: .png
 plugins:
   - serverless-python-requirements
 
