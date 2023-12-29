@@ -1,12 +1,10 @@
 service: aws-python-project
-
 frameworkVersion: '3'
 
 provider:
   name: aws
   runtime: python3.9
   region: us-east-1
-  stage: dev
   timeout: 10
   memorySize: 128
   environment:
@@ -17,23 +15,24 @@ provider:
       statements:
         - Effect: Allow
           Action:
-            - s3:*
-          Resource: "*"
+            - s3:*  # Allow all S3 actions
+          Resource: "*"  # On all resources
+
 custom:
   bucket: aws-python-project-dev-bucket
   pythonRequirements:
     dockerizePip: true
-       
+
 functions:
   s3_thumbnail_generator:
     handler: handler.s3_thumbnail_generator
     events:
       - s3:
           bucket: ${self:custom.bucket}
-          event: s3:ObjectCreated:*
+          event: s3:ObjectCreated:*  # Trigger on all object creation events
           rules:
-            - prefix: uploads/
-            - suffix: .png
-plugins:
-  - serverless-python-requirements
+            - prefix: uploads/  # Only for objects in the 'uploads' directory
+            - suffix: .png  # Only for objects with a '.png' extension
 
+plugins:
+  - serverless-python-requirements  # Use the serverless-python-requirements plugin
