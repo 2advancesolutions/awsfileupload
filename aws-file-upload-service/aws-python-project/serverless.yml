@@ -24,7 +24,20 @@ custom:
   bucket: aws-python-project-dev-bucket
   pythonRequirements:
     dockerizePip: true
-
+    s3Deploy:
+    - bucket: ${self:custom.bucket}
+      properties:
+        CorsConfiguration:
+          CorsRules:
+            - AllowedOrigins:
+                - '*'
+              AllowedMethods:
+                - GET
+                - PUT
+                - POST
+                - DELETE
+              AllowedHeaders:
+                - '*'  # Allows all headers
 functions:
   s3_thumbnail_generator:
     handler: handler.s3_thumbnail_generator
@@ -44,4 +57,5 @@ functions:
           cors: true
 
 plugins:
-  - serverless-python-requirements  # Use the serverless-python-requirements plugin
+  - serverless-python-requirements # Use the serverless-python-requirements plugin
+  - serverless-s3-deploy # Use the serverless-s3-deploy plugin

@@ -67,9 +67,16 @@ def upload_image(event, context):
         }
 
     return {
-        'statusCode': 200,
-        'body': json.dumps({'file_path': file_path})
-    }
+    'statusCode': 200,
+    'headers': {
+        'Access-Control-Allow-Origin': '*',  # Or the specific origin you want to allow
+        'Access-Control-Allow-Credentials': 'true',
+    },
+    'body': json.dumps({
+        'message': 'Image uploaded successfully',
+        'file': {'file_path': file_path}
+    })
+}
 
 # helper functions 
 def get_s3_image(bucket, key):
