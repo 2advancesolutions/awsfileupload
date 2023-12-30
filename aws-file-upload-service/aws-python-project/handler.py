@@ -67,20 +67,36 @@ def upload_to_s3(bucket, key, image, img_size):
     return url
 
 def upload_image(event, context):
-    if event['body']:
-        data = json.loads(event['body'])
+    if 'body' in event and event['body'].strip():
+        try:
+            data = json.loads(event['body'])
+        except json.JSONDecodeError:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'error_message': 'Invalid JSON format'})
+            }
     else:
-        data = {}
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error_message': 'Missing request body'})
+        }
+
+    if 'file' not in data or 'filename' not in data:
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error_message': 'Missing file or filename in request body'})
+        }
+
     file_content = base64.b64decode(data['file'])
     file_path = data['filename']
     bucket = 'aws-python-project-dev-bucket'
 
     try:
         s3_response = s3.put_object(Body=file_content, Bucket=bucket, Key=file_path)
-    except NoCredentialsError:
+    except Exception as e:
         return {
-            'statusCode': 401,
-            'body': json.dumps({'error_message': 'No credentials found'})
+            'statusCode': 500,
+            'body': json.dumps({'error_message': str(e)})
         }
 
     return {

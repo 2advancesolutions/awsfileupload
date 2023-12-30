@@ -332,5 +332,6 @@
 <!-- * * * * * * * * * * End of Placeholder  * * * * * * * * * * * * -->
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
 
-
+<input type="file" (change)="onFileSelected($event)" />
+<button (click)="uploadImage()">Upload</button>
 <router-outlet></router-outlet>
