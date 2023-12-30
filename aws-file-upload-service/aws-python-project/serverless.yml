@@ -33,6 +33,22 @@ functions:
           rules:
             - prefix: uploads/  # Only for objects in the 'uploads' directory
             - suffix: .png  # Only for objects with a '.png' extension
+  upload_image:
+    handler: handler.upload_image
+    events:
+      - http:
+          path: upload
+          method: post
+          cors:
+            origin: '*'  # Allow all origins
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+            allowCredentials: false
 
 plugins:
   - serverless-python-requirements  # Use the serverless-python-requirements plugin
