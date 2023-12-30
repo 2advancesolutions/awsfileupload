@@ -67,7 +67,10 @@ def upload_to_s3(bucket, key, image, img_size):
     return url
 
 def upload_image(event, context):
-    data = json.loads(event['body'])
+    if event['body']:
+        data = json.loads(event['body'])
+    else:
+        data = {}
     file_content = base64.b64decode(data['file'])
     file_path = data['filename']
     bucket = 'aws-python-project-dev-bucket'
