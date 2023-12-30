@@ -23,16 +23,16 @@ def s3_thumbnail_generator(event, context):
         image = get_s3_image(bucket, key)
         thumbnail = image_to_thumbnail(image)
         thumbnail_key = new_file_name(key)
-        url = upload_to_s3(bucket, thumbnail_key, thumbnail, img_size)
-        return url
-
-    body = {
-        "message": "Go Serverless v3.0! Your function executed successfully!",
-        "input": event,
-    }
-
-    return {"statusCode": 200, "body": json.dumps(body)}
-
+        url = upload_to_s3(bucket, thumbnail_key, thumbnail, img_size) 
+        return {
+            "statusCode": 200,
+            "body": json.dumps({
+                "message": "Thumbnail generated and uploaded successfully!",
+                "thumbnail_url": url,
+                "input": event
+            })
+        }
+      
 def upload_image(event, context):
     if 'body' in event and event['body'].strip():
         try:
