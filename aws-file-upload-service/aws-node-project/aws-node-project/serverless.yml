@@ -1,0 +1,45 @@
+service: aws-node-project
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  timeout: 30
+  memorySize: 256
+  environment:
+    THUMBNAIL_SIZE: 128
+    REGION_NAME: ${self:provider.region}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:*  # Allow all S3 actions
+          Resource: "*"  # On all resources
+
+custom:
+  bucket: aws-nodejs-project-dev-bucket
+
+functions:
+  s3_thumbnail_generator:
+    handler: handler.s3_thumbnail_generator
+    layers:
+      - arn:aws:lambda:us-east-1:873259176532:layer:sharp:1
+    events:
+      - s3:
+          bucket: ${self:custom.bucket}
+          event: s3:ObjectCreated:*  # Trigger on all object creation events
+          rules:
+            - prefix: uploads/  # Only for objects in the 'uploads' directory
+            - suffix: .png  # Only for objects with a '.png' extension
+  upload_image:
+    handler: index.upload_image
+    events:
+      - http:
+          path: upload
+          method: post
+          cors: true
+
+plugins:
+  - serverless-s3-deploy # Use the serverless-s3-deploy plugin

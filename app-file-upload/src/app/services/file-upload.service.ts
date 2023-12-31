@@ -7,6 +7,10 @@ import { Observable } from 'rxjs';
 })
 export class FileUploadService {
   constructor(private http: HttpClient) {}
+  config = {
+    pythonUrl: 'https://vp289iznu3.execute-api.us-east-1.amazonaws.com/dev',
+    nodeUrl: ' https://2u8a893mdc.execute-api.us-east-1.amazonaws.com/dev/upload',
+  }
 
   uploadImage(file: File): Observable<any> {
     return new Observable((observer) => {
@@ -20,7 +24,7 @@ export class FileUploadService {
           filename: file.name,
         };
         this.http
-          .post('https://vp289iznu3.execute-api.us-east-1.amazonaws.com/dev/upload', data)
+          .post(this.config.nodeUrl, data)
           .subscribe(
             (response) => {
               observer.next(response);
