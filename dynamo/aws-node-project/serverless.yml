@@ -1,0 +1,58 @@
+service: aws-node-project
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  timeout: 30
+  memorySize: 256
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/config"
+
+functions:
+  create:
+    handler: index.create
+    events:
+      - http:
+          path: /items
+          method: post
+          cors: true
+  update:
+    handler: index.update
+    events:
+      - http:
+          path: /items/{id}
+          method: put
+          cors: true
+  delete:
+    handler: index.delete
+    events:
+      - http:
+          path: /items/{id}
+          method: delete
+          cors: true
+
+resources:
+  Resources:
+    config:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        TableName: config
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
